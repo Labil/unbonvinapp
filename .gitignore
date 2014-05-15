@@ -1,0 +1,13 @@
+web/
+art/
+gen/
+AndroidManifest.xml
+proguard-project.txt
+project.properties
+/res
+/libs
+/bin
+/assets
+.classpath
+.project
+.settings
