@@ -65,11 +65,12 @@ public class SearchActivity extends Activity {
 	    };
 	}
 	
-	/*private TextView addTextView(View parent, String txt, float textSize, int[] padding, int textColor,
-			LinearLayout.LayoutParams params){
+	private TextView addTextView(LinearLayout parent, String txt, float textSize, int[] padding, int textColor,
+			LinearLayout.LayoutParams params, Typeface typeface){
 		
 		TextView tv = new TextView(this);
 		if(params != null) tv.setLayoutParams(params);
+		if(typeface != null) tv.setTypeface(typeface);
 		tv.setText(txt);
 		tv.setTextSize(textSize);
 		tv.setTextColor(textColor);
@@ -77,8 +78,7 @@ public class SearchActivity extends Activity {
 		parent.addView(tv);
 		
 		return tv;
-		
-	}*/
+	}
 	
 	private void populateView(List<Wine> wines){
 		LinearLayout layout = (LinearLayout) findViewById(R.id.container);
@@ -92,96 +92,69 @@ public class SearchActivity extends Activity {
 		int padding = 40;
 		int thirdWidth = (width/3) - padding;
 		
-		int mainTextCol = Color.WHITE;
-		int subTextCol = Color.parseColor("#D7D7D7"); //Grayer white for the non-title text
+		int titleColor = Color.WHITE;
+		int subColor = Color.parseColor("#D7D7D7"); //Grayer white for the non-title text
+		int bgColor = colorScheme.getColor("Background");
+		float titleFontSize = 24;
+		float subFontSize = 22;
+		int[] titlePadding = {20, 20, 20, 10};
+		int[] subPadding = {20, 0, 20, 20};
+		int[] msgPadding = {20, 20, 20, 20};
+		
+		if(wines.size() == 0){
+			LinearLayout messageContainer = new LinearLayout(this);
+			messageContainer.setOrientation(LinearLayout.VERTICAL);
+			messageContainer.setBackgroundColor(bgColor);
+			layout.addView(messageContainer);
+			addTextView(messageContainer, "Beklager, ingen viner ble funnet. Prøv igjen med et annet søkeord!", titleFontSize, msgPadding, titleColor, null, mNameFont);
+		}
 		
 		for(Wine w : wines){
 			
-			int bgCol = colorScheme.getColor("Background");
-			
+			/******************* Layouts ***************************/
+			//Main container, one per wine
 			LinearLayout wineContainer = new LinearLayout(this);
 			wineContainer.setOrientation(LinearLayout.VERTICAL);
 			wineContainer.setClickable(true);
-			wineContainer.setBackgroundColor(bgCol);
+			wineContainer.setBackgroundColor(bgColor);
 			layout.addView(wineContainer);
 			
-			//Wine title
-			TextView name = new TextView(this);
-			name.setText(w.getName());
-			name.setTypeface(mNameFont);
-        	name.setTextSize((float)24);
-        	name.setTextColor(mainTextCol);
-        	name.setPadding(20, 20, 20, 10);
-        	wineContainer.addView(name);
-        	
-        	//Wine short info
+			//Wine short info container
         	LinearLayout shortInfo = new LinearLayout(this);
         	shortInfo.setOrientation(LinearLayout.HORIZONTAL);
-        	wineContainer.addView(shortInfo);
         	
-        	TextView year = new TextView(this);
+        	// Hidden content - pops up when user clicks to display more info
+         	LinearLayout info = new LinearLayout(this);
+         	info.setOrientation(LinearLayout.VERTICAL);
+         	info.setVisibility(View.GONE);
+			
+        	/****************** Content data **********************/
+			//Wine title
+			TextView name = addTextView(wineContainer, w.getName(), titleFontSize, titlePadding, titleColor, null, mNameFont);
+			
+			//Must add it after the title is added, else the layout is in the wrong order
+			wineContainer.addView(shortInfo);
+			
         	String y = w.getYear();
-        	if(y == null){
-        		y = "?";
-        	}
-        	year.setText("År: " + y);
-        	year.setTextSize((float)22);
-        	year.setTextColor(subTextCol);
-        	year.setPadding(20, 0, 20, 20);
-        	year.setLayoutParams(new LinearLayout.LayoutParams(
-        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT));
+        	if(y == null){ y = "?"; }
+        	addTextView(shortInfo, "År: " + y, subFontSize, subPadding, subColor, new LinearLayout.LayoutParams(
+        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
+        	addTextView(shortInfo, w.getStars() + " stjerner", subFontSize, subPadding, subColor, new LinearLayout.LayoutParams(
+        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
+        	addTextView(shortInfo, w.getPrice() + " Kr", subFontSize, subPadding, subColor, new LinearLayout.LayoutParams(
+        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
         	
-        	TextView stars = new TextView(this);
-        	stars.setLayoutParams(new LinearLayout.LayoutParams(
-        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT));
-        	stars.setText(w.getStars() + " stjerner");
-        	stars.setTextSize((float)22);
-        	stars.setTextColor(subTextCol);
-        	stars.setPadding(20, 0, 20, 20);
-        	
-        	
-        	TextView price = new TextView(this);
-        	price.setText(w.getPrice() + " Kr");
-        	price.setTextSize((float)22);
-        	price.setTextColor(subTextCol);
-        	price.setPadding(20, 0, 20, 20);
-        	price.setLayoutParams(new LinearLayout.LayoutParams(
-        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT));
-        	
-        	
-        	shortInfo.addView(year);
-        	shortInfo.addView(stars);
-        	shortInfo.addView(price);
-        	
-        	////////// Hidden content //////////////////////
-        	LinearLayout info = new LinearLayout(this);
-        	info.setOrientation(LinearLayout.VERTICAL);
-        	info.setVisibility(View.GONE);
+        	//Must add after the other layouts, to make it display beneath the others
         	wineContainer.addView(info);
         	
-        	TextView type = new TextView(this);
-        	type.setText("Type: " + w.getType());
-        	type.setTextSize((float)22);
-        	type.setTextColor(subTextCol);
-        	type.setPadding(20, 0, 20, 20);
-        	info.addView(type);
+        	addTextView(info, "Type: " + w.getType(), subFontSize, subPadding, subColor, null, null);
         	
         	if(w.getCountry() != null){
-	        	TextView country = new TextView(this);
-	        	country.setText("Land: " + w.getCountry());
-	        	country.setTextSize((float)22);
-	        	country.setTextColor(subTextCol);
-	        	country.setPadding(20, 0, 20, 20);
-	        	info.addView(country);
+        		addTextView(info, "Land: " + w.getCountry(), subFontSize, subPadding, subColor, null, null);
         	}
         	
         	if(w.getRegion() != null){
-	        	TextView region = new TextView(this);
-	        	region.setText("Region: " + w.getRegion());
-	        	region.setTextSize((float)22);
-	        	region.setTextColor(subTextCol);
-	        	region.setPadding(20, 0, 20, 20);
-	        	info.addView(region);
+        		addTextView(info, "Region: " + w.getRegion(), subFontSize, subPadding, subColor, null, null);
         	}
         	
         	String desc = "";
@@ -192,12 +165,7 @@ public class SearchActivity extends Activity {
         	if(taste != null) desc += taste + ". ";
         	if(concl != null) desc += concl + ". ";
         	
-        	TextView description = new TextView(this);
-        	description.setText("Beskrivelse: " + desc);
-        	description.setTextSize((float)20);
-        	description.setTextColor(subTextCol);
-        	description.setPadding(20, 0, 20, 20);
-        	info.addView(description);
+        	addTextView(info, "Beskrivelse: " + desc, (float)20, subPadding, subColor, null, null);
         	
         	wineContainer.setOnClickListener(onWineClick(info));
         	
@@ -206,7 +174,6 @@ public class SearchActivity extends Activity {
         	View ruler = new View(this); 
         	ruler.setBackgroundColor(borderCol);
         	layout.addView(ruler, new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, 4));
-        
         }
 	}
 	/**
@@ -305,7 +272,5 @@ public class SearchActivity extends Activity {
 			populateView(wines);
 		}
 	}
-	
-	
 }
 
