@@ -67,7 +67,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String CHEAP_PRICE = "100";
 	
 	private static final String KEY_VERSION_IN_TABLE_UPDATE = "updateNum";
-	private static final int RESULT_LIMIT = 100;
+	//private static final int RESULT_LIMIT = 100;
 	
 	/**
      * Constructor
@@ -215,8 +215,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		else return " ";
 	}
 	
-	public CustomStringList getListOfWineTypes(){
-		String qry = "SELECT " + KEY_TYPE + " FROM " + TABLE_WINES + " GROUP BY " + KEY_TYPE;
+	public CustomStringList getListOfProperty(String columnName){
+		String qry = "SELECT " + columnName + " FROM " + TABLE_WINES + " GROUP BY " + columnName;
 		CustomStringList typeList = new CustomStringList();
 		openDatabaseRead();
 		Cursor cursor = mDatabase.rawQuery(qry, null);
@@ -227,7 +227,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				typeList.add(s);
 			}while(cursor.moveToNext());
 		}
-		else Log.d(TAG, "No result when querying wine types!");
+		else Log.d(TAG, "No result when querying wine properties!");
 		close();
 		return typeList;
 	}
@@ -243,13 +243,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if(param == "price"){
 			sortQry = "";
 		}
-		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE + "<= " + price + sortQry;
+		//I can't get it to return wines where value is equal to query, for example query for 100 returns only wines below 100 in price.
+		//hack solution
+		int iPrice = Integer.parseInt(price) + 1;
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE + "<=" + iPrice + sortQry;
 		return queryWines(qry);
 	}
 	
 	public List<Wine> getWinesByType(String type, String param){
 		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_TYPE + "=\"" + type +
 				"\" COLLATE NOCASE" + getSortQry(param);
+		return queryWines(qry);
+	}
+	
+	public List<Wine> getWinesByCountry(String country, String param){
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_COUNTRY +
+				"=\"" + country + "\" COLLATE NOCASE" + getSortQry(param);
 		return queryWines(qry);
 	}
 	

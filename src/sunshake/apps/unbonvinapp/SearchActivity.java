@@ -25,6 +25,7 @@ import android.widget.TextView;
 public class SearchActivity extends Activity {
 	private WineColorScheme colorScheme = null;
 	private CustomStringList wineTypes;
+	private CustomStringList wineCountries;
 	private DatabaseHandler dbHandler;
 	private static String TAG = "[Search Activity]";
 	private Typeface mNameFont;
@@ -47,7 +48,8 @@ public class SearchActivity extends Activity {
 	 	}catch(SQLException sqle){
 	 		throw sqle;
 	 	}
-	 	wineTypes = dbHandler.getListOfWineTypes();
+	 	wineTypes = dbHandler.getListOfProperty("type");
+	 	wineCountries = dbHandler.getListOfProperty("country");
 	 	/*String str = "";
 	 	for (String s : wineTypes){
 	 		str += (", " + s);
@@ -290,6 +292,11 @@ public class SearchActivity extends Activity {
 		else if(wineTypes.contains(query)){
 			Log.d(TAG, "The query was for type");
 			List<Wine> wines = dbHandler.getWinesByType(query, "alpha");
+			populateView(wines);
+		}
+		else if(wineCountries.contains(query)){
+			Log.d(TAG, "The query is for a country");
+			List<Wine> wines = dbHandler.getWinesByCountry(query, "");
 			populateView(wines);
 		}
 		else if(query.matches(".{1,}")){
