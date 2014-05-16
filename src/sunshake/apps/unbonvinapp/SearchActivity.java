@@ -9,7 +9,6 @@ import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -25,6 +24,7 @@ import android.widget.TextView;
 
 public class SearchActivity extends Activity {
 	private WineColorScheme colorScheme = null;
+	private CustomStringList wineTypes;
 	private DatabaseHandler dbHandler;
 	private static String TAG = "[Search Activity]";
 	private Typeface mNameFont;
@@ -47,6 +47,12 @@ public class SearchActivity extends Activity {
 	 	}catch(SQLException sqle){
 	 		throw sqle;
 	 	}
+	 	wineTypes = dbHandler.getListOfWineTypes();
+	 	/*String str = "";
+	 	for (String s : wineTypes){
+	 		str += (", " + s);
+	 	}
+	 	Log.d(TAG, str);*/
 		
 	}
 	View.OnClickListener onWineClick(final LinearLayout info)  {
@@ -85,23 +91,23 @@ public class SearchActivity extends Activity {
 		int thirdWidth = (width/3) - padding;
 		
 		int mainTextCol = Color.WHITE;
-		int subTextCol = Color.parseColor("#e7e7e7");
+		int subTextCol = Color.parseColor("#D7D7D7"); //Grayer white for the non-title text
 		
 		for(Wine w : wines){
 			
-			int col = colorScheme.getColor(w.getType());
+			int bgCol = colorScheme.getColor("Background");
 			
 			LinearLayout wineContainer = new LinearLayout(this);
 			wineContainer.setOrientation(LinearLayout.VERTICAL);
 			wineContainer.setClickable(true);
-			wineContainer.setBackgroundColor(col);
+			wineContainer.setBackgroundColor(bgCol);
 			layout.addView(wineContainer);
 			
 			//Wine title
 			TextView name = new TextView(this);
 			name.setText(w.getName());
 			name.setTypeface(mNameFont);
-        	name.setTextSize((float)30);
+        	name.setTextSize((float)24);
         	name.setTextColor(mainTextCol);
         	name.setPadding(20, 20, 20, 10);
         	wineContainer.addView(name);
@@ -112,7 +118,11 @@ public class SearchActivity extends Activity {
         	wineContainer.addView(shortInfo);
         	
         	TextView year = new TextView(this);
-        	year.setText("År: " + w.getYear());
+        	String y = w.getYear();
+        	if(y == null){
+        		y = "?";
+        	}
+        	year.setText("År: " + y);
         	year.setTextSize((float)22);
         	year.setTextColor(subTextCol);
         	year.setPadding(20, 0, 20, 20);
@@ -190,9 +200,10 @@ public class SearchActivity extends Activity {
         	wineContainer.setOnClickListener(onWineClick(info));
         	
         	/////Horizontal rule between the wines
+        	int borderCol = colorScheme.getColor(w.getType());
         	View ruler = new View(this); 
-        	ruler.setBackgroundColor(Color.parseColor("#ffffff"));
-        	layout.addView(ruler, new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, 2));
+        	ruler.setBackgroundColor(borderCol);
+        	layout.addView(ruler, new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, 4));
         
         }
 	}
@@ -252,47 +263,38 @@ public class SearchActivity extends Activity {
 	    }
 	    else{
 	    	setContentView(R.layout.activity_search);
-	    	search(searchText);
+	    	handleSearch(searchText);
 	    }
 	}
 	
-	private void search(String query){
+	private void handleSearch(String query){
 		
 		if(query.isEmpty()){
 			Log.d(TAG, "The query was empty");
-			List<Wine> wines = dbHandler.getWinesAlphabetically();
+			//Hardcoding in param for now until I make checkboxes
+			List<Wine> wines = dbHandler.getWines("alpha");
 			populateView(wines);
 		}
 		//If the query matches any number 4 times in a row (year)
 		else if(query.matches("(\\d{4})")){
 			Log.d(TAG, "The query is for a year");
-			List<Wine> wines = dbHandler.getWinesByYear(query);
+			List<Wine> wines = dbHandler.getWinesByYear(query, "alpha");
 			populateView(wines);
 		}
-		//Three-digit numbers are considered search for price
-		else if(query.matches("(\\d{3})")){
+		//Three- and two-digit numbers are considered search for price
+		else if(query.matches("(\\d{3})") || query.matches("(\\d{2})")){
 			Log.d(TAG, "The query is for a price");
-			List<Wine> wines = dbHandler.getWinesByPriceAsc(query);
+			List<Wine> wines = dbHandler.getWinesByPrice(query, "");
 			populateView(wines);
 		}
-		//TODO: Fix a dictionary or something that makes sure every type in db is here
-		else if(query.compareTo("Rød") == 0 || query.compareTo("Hvit") == 0 ||
-				query.compareTo("Champagne") == 0 || query.compareTo("Rose") == 0 ||
-				query.compareTo("Dessertvin") == 0 || query.compareTo("Søtvin") == 0 ||
-				query.compareTo("Sherry") == 0 || query.compareTo("Akevitt") == 0 ||
-				query.compareTo("Musserende") == 0 || query.compareTo("Tokaji") == 0 ||
-				query.compareTo("Portvin") == 0 || query.compareTo("Portvin") == 0 ||
-				query.compareTo("Hetvin") == 0 || query.compareTo("Cognac") == 0 ||
-				query.compareTo("Oransje") == 0 || query.compareTo("Madeira") == 0 ||
-				query.compareTo("Rom") == 0){
-			
+		else if(wineTypes.contains(query)){
 			Log.d(TAG, "The query was for type");
-			List<Wine> wines = dbHandler.getWinesByType(query);
+			List<Wine> wines = dbHandler.getWinesByType(query, "alpha");
 			populateView(wines);
 		}
-		else if(query.matches("\\w")){
+		else if(query.matches(".{1,}")){
 			Log.d(TAG, "The query was for a name");
-			List<Wine> wines = dbHandler.getWinesByName(query);
+			List<Wine> wines = dbHandler.getWinesByName(query, "price");
 			populateView(wines);
 		}
 	}

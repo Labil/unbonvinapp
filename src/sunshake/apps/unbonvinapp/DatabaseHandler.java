@@ -214,38 +214,64 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		else if(param == "bestcheap") return " AND " + KEY_PRICE + " <= " + CHEAP_PRICE + " AND " + KEY_STARS + " =6";
 		else return " ";
 	}
+	
+	public CustomStringList getListOfWineTypes(){
+		String qry = "SELECT " + KEY_TYPE + " FROM " + TABLE_WINES + " GROUP BY " + KEY_TYPE;
+		CustomStringList typeList = new CustomStringList();
+		openDatabaseRead();
+		Cursor cursor = mDatabase.rawQuery(qry, null);
+		
+		if(cursor.moveToFirst()){
+			do{
+				String s = cursor.getString(0);
+				typeList.add(s);
+			}while(cursor.moveToNext());
+		}
+		else Log.d(TAG, "No result when querying wine types!");
+		close();
+		return typeList;
+	}
 	 
 	// Get wine by name LIKE 'name%' -> in list.
 	public List<Wine> getWinesByName(String name, String param) {
-		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_NAME + " LIKE '" + name + "%'" + getSortQry(param);
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_NAME + " LIKE '" + name + "%' COLLATE NOCASE" + getSortQry(param);
 		return queryWines(qry);
 	}
 	
-	public List<Wine> getWinesByPriceAsc(String price){
-		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE + "<= " + price +
-				" ORDER BY " + KEY_PRICE + " ASC LIMIT 0," +  RESULT_LIMIT;
-		return queryWines(qry);
-	}
-	public List<Wine> getWinesByPriceDesc(String price){
-		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE + "<= " + price;
+	public List<Wine> getWinesByPrice(String price, String param){
+		String sortQry = getSortQry(param);
+		if(param == "price"){
+			sortQry = "";
+		}
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE + "<= " + price + sortQry;
 		return queryWines(qry);
 	}
 	
-	public List<Wine> getWinesByType(String type){
+	public List<Wine> getWinesByType(String type, String param){
 		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_TYPE + "=\"" + type +
-				"\" ORDER BY " + KEY_PRICE + " ASC";
+				"\" COLLATE NOCASE" + getSortQry(param);
 		return queryWines(qry);
 	}
 	
-	public List<Wine> getWinesAlphabetically(){
-		String qry = "SELECT * FROM " + TABLE_WINES + " ORDER BY " + KEY_NAME + " ASC LIMIT 0, "
-						+ RESULT_LIMIT;
+	public List<Wine> getWines(String param){
+		String qry = "SELECT * FROM " + TABLE_WINES + getSortQry(param);
 		return queryWines(qry);
 	}
 	
-	public List<Wine> getWinesByYear(String year){
-		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_YEAR + "=" + year + " LIMIT 0, "
-						+ RESULT_LIMIT;
+	public List<Wine> getNewestWines(){
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_ID + ">=" + NEW_THRESHOLD +
+				" ORDER BY " + KEY_ID + " DESC";
+		return queryWines(qry);
+	}
+	
+	public List<Wine> getBestCheapWines(){
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE +
+				"<=" + CHEAP_PRICE + " AND " + KEY_STARS + "=6";
+		return queryWines(qry);
+	}
+	
+	public List<Wine> getWinesByYear(String year, String param){
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_YEAR + "=" + year + getSortQry(param);
 		return queryWines(qry);
 	}
 	

@@ -26,6 +26,7 @@ public class WineColorScheme {
 	 	colors.put("Musserende", this.context.getResources().getColor(R.color.Musserende));
 	 	colors.put("Akevitt", this.context.getResources().getColor(R.color.Akevitt));
 	 	colors.put("Annet", this.context.getResources().getColor(R.color.Annet));
+	 	colors.put("Background", this.context.getResources().getColor(R.color.Background));
 	}
 	
 	public int getColor(String name){
