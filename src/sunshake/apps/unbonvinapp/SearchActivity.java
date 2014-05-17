@@ -15,20 +15,26 @@ import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class SearchActivity extends Activity {
 	private WineColorScheme colorScheme = null;
-	private CustomStringList wineTypes;
-	private CustomStringList wineCountries;
+	private CustomStringList wineTypes, wineCountries;
 	private DatabaseHandler dbHandler;
-	private static String TAG = "[Search Activity]";
+	private static final String TAG = "[Search Activity]";
 	private Typeface mNameFont;
+	private RadioButton alphabeticalCB, typeCB, priceCB, bestcheapCB, newestCB;
+	private RadioGroup filterRadioGroup;
+	private String lastQuery = "";
+	private RadioButton lastChosenRB = null;
+	//private List<RadioButton> radioButtons = new ArrayList<RadioButton>();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,13 +56,16 @@ public class SearchActivity extends Activity {
 	 	}
 	 	wineTypes = dbHandler.getListOfProperty("type");
 	 	wineCountries = dbHandler.getListOfProperty("country");
-	 	/*String str = "";
-	 	for (String s : wineTypes){
-	 		str += (", " + s);
-	 	}
-	 	Log.d(TAG, str);*/
-		
+	 	
+	 	alphabeticalCB = (RadioButton) findViewById(R.id.alphabetical);
+	 	typeCB = (RadioButton) findViewById(R.id.type);
+	 	priceCB = (RadioButton) findViewById(R.id.price);
+	 	bestcheapCB = (RadioButton) findViewById(R.id.bestcheap);
+	 	newestCB = (RadioButton) findViewById(R.id.newest);
+	 	filterRadioGroup = (RadioGroup) findViewById(R.id.radioFilter);
+	 	
 	}
+	
 	View.OnClickListener onWineClick(final LinearLayout info)  {
 	    return new View.OnClickListener() {
 	        public void onClick(View v) {
@@ -82,7 +91,7 @@ public class SearchActivity extends Activity {
 	
 	private void populateView(List<Wine> wines){
 		LinearLayout layout = (LinearLayout) findViewById(R.id.container);
-		layout.removeAllViews();
+		//layout.removeAllViews();
 		
 		//Get the width of the display to setup the layout
 		Display display = getWindowManager().getDefaultDisplay();
@@ -189,8 +198,7 @@ public class SearchActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    // Inflate the menu items for use in the action bar
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.action_bar_menu, menu);
+	    getMenuInflater().inflate(R.menu.action_bar_menu, menu);
 	    return super.onCreateOptionsMenu(menu);
 	}
 
