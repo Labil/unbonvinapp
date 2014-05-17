@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Un Bon Vin App</string>
+    <string name="search_button">Søk</string>
+    <string name="search_hint">Søk etter navn, år, land eller pris</string>
+    
+    <string name="action_settings">Instillinger</string>
+    <string name="action_search">Søk</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_display_message">My Message</string>
+    
+    <!-- Welcome splash screen strings -->
+    <string name="welcome_illustration_caption">Illustration</string>
+    <string name="welcome_description_search">Trykk på forstørrelsesglasset i menyen for å søke blant mer enn 1000 viner.</string>
+    <string name="welcome_description_info">App utviklet av sunshake.io / Solveig Hansen 2014</string>
+	
+    <string name="filters">Sorter etter:</string>
+    <string name="alphabetical">Navn</string>
+    <string name="type">Type</string>
+    <string name="price">Pris (Lav-høy)</string>
+    <string name="newest">Nyeste</string>
+    <string name="bestcheap">Best &amp; billig!</string>
+</resources>

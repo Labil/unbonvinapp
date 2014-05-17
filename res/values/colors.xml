@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="Rød">#690b19</color>
+    <color name="Hvit">#f9d37e</color>
+    <color name="Rose">#ea9aa7</color>
+    <color name="Annet">#AAAAAA</color>
+    <color name="Champagne">#f9e4d1</color>
+    <color name="Dessertvin">#ffb19a</color>
+    <color name="Søtvin">#ba2e40</color>
+    <color name="Sherry">#cc1164</color>
+    <color name="Musserende">#ffb19a</color>
+    <color name="Akevitt">#f3e9dd</color>
+    <color name="Portvin">#640d15</color>
+    <color name="Tokaji">#c96f00</color>
+    <color name="Hetvin">#531e24</color>
+    <color name="Cognac">#983a0c</color>
+    <color name="Oransje">#f9c974</color>
+    <color name="Madeira">#982900</color>
+    <color name="Rom">#5c0027</color>
+    <color name="Background">#060606</color>
+    
+    
+</resources>
