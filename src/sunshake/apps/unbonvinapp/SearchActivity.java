@@ -1,6 +1,7 @@
 package sunshake.apps.unbonvinapp;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -19,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -150,6 +150,7 @@ public class SearchActivity extends Activity {
 			if(count == 0){
 				wineContainer.setBackground(getResources().getDrawable(R.drawable.round_edges_top_bg));
 			}
+			
 			mResultLayout.addView(wineContainer);
 			count++;
 			//Wine short info container
@@ -274,7 +275,7 @@ public class SearchActivity extends Activity {
 	    	Log.d(TAG, "This was first time starting app");
 	    	//Send in lastQuery which by default is empty, 
 	    	//thus fetching all wines by alphabetical order at startup
-	    	handleSearch("all");
+	    	handleSearch("");
 	    }
 	    else{
 	    	//setContentView(R.layout.activity_search);
@@ -319,9 +320,9 @@ public class SearchActivity extends Activity {
 	
 	private void handleSearch(String query){
 		
-		if(query == "all"){
-			Log.d(TAG, "The query was for all wines");
-			List<Wine> wines = dbHandler.getWines(getFilterParam());
+		if(query.isEmpty()){
+			Log.d(TAG, "The query was empty");
+			List<Wine> wines = new ArrayList<Wine>();
 			populateView(wines);
 		}
 		//If the query matches any number 4 times in a row (year)

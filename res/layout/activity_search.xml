@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/main_bg"
+    android:background="@drawable/background"
     tools:context=".SearchActivity" >
     
     <LinearLayout
@@ -18,7 +18,7 @@
 	    android:orientation="vertical"
 	    android:id="@+id/container" >
 	    
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -32,7 +32,7 @@
                 android:textStyle="bold"
                 android:text="@string/filters" />
             
-        </LinearLayout>
+        </LinearLayout>-->
             
             <RadioGroup
                 android:id="@+id/radioFilter"
@@ -71,24 +71,6 @@
 		            android:textColor="#ffffff"
                 	android:textSize="24sp"
 		            android:text="@string/price" />
-		       <!-- <RadioButton
-		            android:id="@+id/newest"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:paddingRight="10dp"
-		            android:tag="@string/tag_newest"
-		            android:textColor="#ffffff"
-                	android:textSize="24sp"
-		            android:text="@string/newest" />
-		        <RadioButton
-		            android:id="@+id/bestcheap"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:paddingRight="10dp"
-		            android:tag="@string/tag_bestcheap"
-		            android:textColor="#ffffff"
-                	android:textSize="24sp"
-		            android:text="@string/bestcheap" />-->
 		 
 		    </RadioGroup>
 		    
