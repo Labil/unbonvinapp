@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import sunshake.apps.unbonvinapp.SearchActivity.OnLoadListener;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -68,7 +69,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	
 	private static final String KEY_VERSION_IN_TABLE_UPDATE = "updateNum";
 	//private static final int RESULT_LIMIT = 100;
-	
+
 	/**
      * Constructor
      * Takes and keeps a reference of the passed context of the activity that
@@ -121,7 +122,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 	//updateVersion();
     }
     
- 
     /**
      * Check if the database already exist to avoid re-copying the file each time you open the application.
      * @return true if it exists, false if it doesn't
@@ -189,6 +189,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
  
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+	
 		//Database creation must wait as this runs before everything is setup (I think)
 		//Call methods from the calling activity
 	}

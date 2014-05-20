@@ -7,18 +7,25 @@
     
     <string name="action_settings">Instillinger</string>
     <string name="action_search">Søk</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_display_message">My Message</string>
     
     <!-- Welcome splash screen strings -->
     <string name="welcome_illustration_caption">Illustration</string>
     <string name="welcome_description_search">Trykk på forstørrelsesglasset i menyen for å søke blant mer enn 1000 viner.</string>
     <string name="welcome_description_info">App utviklet av sunshake.io / Solveig Hansen 2014</string>
 	
+    <!-- Radio buttons -->
     <string name="filters">Sorter etter:</string>
     <string name="alphabetical">Navn</string>
     <string name="type">Type</string>
     <string name="price">Pris (Lav-høy)</string>
     <string name="newest">Nyeste</string>
     <string name="bestcheap">Best &amp; billig!</string>
+    
+    <!-- Tag text strings defined on the radio buttons that will be used as extra params when searching -->
+    <string name="tag_alpha">alpha</string>
+    <string name="tag_type">type</string>
+    <string name="tag_price">price</string>
+    <string name="tag_newest">newest</string>
+    <string name="tag_bestcheap">bestcheap</string>
+    
 </resources>

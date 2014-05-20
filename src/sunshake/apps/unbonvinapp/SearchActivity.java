@@ -33,12 +33,19 @@ public class SearchActivity extends Activity {
 	private RadioGroup filterRadioGroup;
 	private String lastQuery = "";
 	private RadioButton lastChosenRB = null;
+	private LinearLayout mResultLayout;
+	private int mThirdWidth, mTitleColor, mSubtitleColor, mBgColor;
+	private float mTitleFontSize, mSubtitleFontSize;
+	private int[] mTitlePadding = {20, 20, 20, 10};
+	private int[] mSubPadding = {20, 0, 20, 20};
+	private int[] mMsgPadding = {20, 20, 20, 20};
+	
 	//private List<RadioButton> radioButtons = new ArrayList<RadioButton>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_welcome);
+		setContentView(R.layout.activity_search);
 		
 		colorScheme = new WineColorScheme(this);
 		mNameFont = Typeface.createFromAsset(getAssets(), "fonts/startlng.ttf");
@@ -54,7 +61,27 @@ public class SearchActivity extends Activity {
 	 	}catch(SQLException sqle){
 	 		throw sqle;
 	 	}
-	 	wineTypes = dbHandler.getListOfProperty("type");
+	 	
+	 	init();
+	}
+	
+	private void init(){
+		mResultLayout = (LinearLayout) findViewById(R.id.results);
+		
+		//Get the width of the display to setup the layout
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int width = size.x;
+		int padding = 40;
+		mThirdWidth = (width/3) - padding;
+		mTitleColor = Color.WHITE;
+		mSubtitleColor = Color.parseColor("#D7D7D7"); //Grayer white for the non-title text
+		mBgColor = colorScheme.getColor("Background");
+		mTitleFontSize = 24;
+		mSubtitleFontSize = 22;
+		
+		wineTypes = dbHandler.getListOfProperty("type");
 	 	wineCountries = dbHandler.getListOfProperty("country");
 	 	
 	 	alphabeticalCB = (RadioButton) findViewById(R.id.alphabetical);
@@ -63,7 +90,6 @@ public class SearchActivity extends Activity {
 	 	bestcheapCB = (RadioButton) findViewById(R.id.bestcheap);
 	 	newestCB = (RadioButton) findViewById(R.id.newest);
 	 	filterRadioGroup = (RadioGroup) findViewById(R.id.radioFilter);
-	 	
 	}
 	
 	View.OnClickListener onWineClick(final LinearLayout info)  {
@@ -90,32 +116,14 @@ public class SearchActivity extends Activity {
 	}
 	
 	private void populateView(List<Wine> wines){
-		LinearLayout layout = (LinearLayout) findViewById(R.id.container);
-		//layout.removeAllViews();
-		
-		//Get the width of the display to setup the layout
-		Display display = getWindowManager().getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		int width = size.x;
-		int padding = 40;
-		int thirdWidth = (width/3) - padding;
-		
-		int titleColor = Color.WHITE;
-		int subColor = Color.parseColor("#D7D7D7"); //Grayer white for the non-title text
-		int bgColor = colorScheme.getColor("Background");
-		float titleFontSize = 24;
-		float subFontSize = 22;
-		int[] titlePadding = {20, 20, 20, 10};
-		int[] subPadding = {20, 0, 20, 20};
-		int[] msgPadding = {20, 20, 20, 20};
+		mResultLayout.removeAllViews();
 		
 		if(wines.size() == 0){
 			LinearLayout messageContainer = new LinearLayout(this);
 			messageContainer.setOrientation(LinearLayout.VERTICAL);
-			messageContainer.setBackgroundColor(bgColor);
-			layout.addView(messageContainer);
-			addTextView(messageContainer, "Beklager, ingen viner ble funnet. Prøv igjen med et annet søkeord!", titleFontSize, msgPadding, titleColor, null, mNameFont);
+			messageContainer.setBackgroundColor(mBgColor);
+			mResultLayout.addView(messageContainer);
+			addTextView(messageContainer, "Beklager, ingen viner ble funnet. Prøv igjen med et annet søkeord!", mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
 		}
 		
 		for(Wine w : wines){
@@ -125,8 +133,8 @@ public class SearchActivity extends Activity {
 			LinearLayout wineContainer = new LinearLayout(this);
 			wineContainer.setOrientation(LinearLayout.VERTICAL);
 			wineContainer.setClickable(true);
-			wineContainer.setBackgroundColor(bgColor);
-			layout.addView(wineContainer);
+			wineContainer.setBackgroundColor(mBgColor);
+			mResultLayout.addView(wineContainer);
 			
 			//Wine short info container
         	LinearLayout shortInfo = new LinearLayout(this);
@@ -139,31 +147,31 @@ public class SearchActivity extends Activity {
 			
         	/****************** Content data **********************/
 			//Wine title
-			TextView name = addTextView(wineContainer, w.getName(), titleFontSize, titlePadding, titleColor, null, mNameFont);
+			addTextView(wineContainer, w.getName(), mTitleFontSize, mTitlePadding, mTitleColor, null, mNameFont);
 			
 			//Must add it after the title is added, else the layout is in the wrong order
 			wineContainer.addView(shortInfo);
 			
         	String y = w.getYear();
         	if(y == null){ y = "?"; }
-        	addTextView(shortInfo, "År: " + y, subFontSize, subPadding, subColor, new LinearLayout.LayoutParams(
-        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
-        	addTextView(shortInfo, w.getStars() + " stjerner", subFontSize, subPadding, subColor, new LinearLayout.LayoutParams(
-        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
-        	addTextView(shortInfo, w.getPrice() + " Kr", subFontSize, subPadding, subColor, new LinearLayout.LayoutParams(
-        			thirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
+        	addTextView(shortInfo, "År: " + y, mSubtitleFontSize, mSubPadding, mSubtitleColor, new LinearLayout.LayoutParams(
+        			mThirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
+        	addTextView(shortInfo, w.getStars() + " stjerner", mSubtitleFontSize, mSubPadding, mSubtitleColor, new LinearLayout.LayoutParams(
+        			mThirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
+        	addTextView(shortInfo, w.getPrice() + " Kr", mSubtitleFontSize, mSubPadding, mSubtitleColor, new LinearLayout.LayoutParams(
+        			mThirdWidth, LinearLayout.LayoutParams.WRAP_CONTENT), null);
         	
         	//Must add after the other layouts, to make it display beneath the others
         	wineContainer.addView(info);
         	
-        	addTextView(info, "Type: " + w.getType(), subFontSize, subPadding, subColor, null, null);
+        	addTextView(info, "Type: " + w.getType(), mSubtitleFontSize, mSubPadding, mSubtitleColor, null, null);
         	
         	if(w.getCountry() != null){
-        		addTextView(info, "Land: " + w.getCountry(), subFontSize, subPadding, subColor, null, null);
+        		addTextView(info, "Land: " + w.getCountry(), mSubtitleFontSize, mSubPadding, mSubtitleColor, null, null);
         	}
         	
         	if(w.getRegion() != null){
-        		addTextView(info, "Region: " + w.getRegion(), subFontSize, subPadding, subColor, null, null);
+        		addTextView(info, "Region: " + w.getRegion(), mSubtitleFontSize, mSubPadding, mSubtitleColor, null, null);
         	}
         	
         	String desc = "";
@@ -174,7 +182,7 @@ public class SearchActivity extends Activity {
         	if(taste != null) desc += taste + ". ";
         	if(concl != null) desc += concl + ". ";
         	
-        	addTextView(info, "Beskrivelse: " + desc, (float)20, subPadding, subColor, null, null);
+        	addTextView(info, "Beskrivelse: " + desc, (float)20, mSubPadding, mSubtitleColor, null, null);
         	
         	wineContainer.setOnClickListener(onWineClick(info));
         	
@@ -182,7 +190,7 @@ public class SearchActivity extends Activity {
         	int borderCol = colorScheme.getColor(w.getType());
         	View ruler = new View(this); 
         	ruler.setBackgroundColor(borderCol);
-        	layout.addView(ruler, new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, 4));
+        	mResultLayout.addView(ruler, new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, 4));
         }
 	}
 	/**
@@ -226,21 +234,39 @@ public class SearchActivity extends Activity {
 	     Bundle appData = new Bundle();
 	     //Data to pass to search activity
 	    // appData.putBoolean(SearchActivity.JARGON, true);
+	     // get selected radio button from radioGroup
+	     int selectedId = filterRadioGroup.getCheckedRadioButtonId();
+	     Log.d(TAG, "Selected radio btn: " + Integer.toString(selectedId));
+  		
+  		 //and save it for when activity resumes after search
+	     ((WineApp)this.getApplicationContext()).setRadioButtonCheckedID(selectedId);
 	     startSearch(null, false, appData, false);
 	     return true;
 	 }
 	
 	protected void onResume() {
 	    super.onResume();
-
+	    
+	    int radioButtonId = ((WineApp)this.getApplicationContext()).getLastCheckedRadioButtonID();
+	    // find the radiobutton by returned id
+        
+        
 	    String searchText = ((WineApp)this.getApplicationContext()).getSearchText();
 	    //The default value of the searchText at application launch (before search has been made)
 	    if(searchText.compareTo("-1") == 0){
 	    	Log.d(TAG, "This was first time starting app");
+	    	//Send in lastQuery which by default is empty, 
+	    	//thus fetching all wines by alphabetical order at startup
+	    	handleSearch(lastQuery);
 	    }
 	    else{
-	    	setContentView(R.layout.activity_search);
+	    	//setContentView(R.layout.activity_search);
 	    	handleSearch(searchText);
+	    	RadioButton selectBtn = (RadioButton) findViewById(radioButtonId);
+	    	if(selectBtn != null){
+	        	selectBtn.performClick();
+	        	//selectBtn.toggle();
+	        }
 	    }
 	}
 	
@@ -279,6 +305,10 @@ public class SearchActivity extends Activity {
 			List<Wine> wines = dbHandler.getWinesByName(query, "price");
 			populateView(wines);
 		}
+	}
+	
+	public interface OnLoadListener{
+		public void onLoad();
 	}
 }
 
