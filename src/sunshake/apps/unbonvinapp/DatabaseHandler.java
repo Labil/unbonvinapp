@@ -64,7 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_NOTE = "note";
 	private static final String KEY_VERSION = "updateVersion";
 	private static final String NEW_THRESHOLD = "940"; //Arbitrary for now
-	private static final String CHEAP_PRICE = "120";
+	private static final int CHEAP_PRICE =105;
 	
 	private static final String KEY_VERSION_IN_TABLE_UPDATE = "updateNum";
 	//private static final int RESULT_LIMIT = 100;
@@ -209,10 +209,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public String getSortQry(String param){
 		if(param == "alpha") return " ORDER BY " + KEY_NAME + " ASC "; //default asc
 		else if(param == "type") return " ORDER BY " + KEY_TYPE + " ASC ";
-		else if(param == "price") return " ORDER BY " + KEY_PRICE + " ASC ";
-		else if(param == "new") return " AND " + KEY_ID + " >= " + NEW_THRESHOLD + " ORDER BY " + KEY_ID + " DESC";
-		else if(param == "bestcheap") return " AND " + KEY_PRICE + " <= " + CHEAP_PRICE + " AND " + KEY_STARS + " =6";
-		else return " ";
+		else if(param == "price") return " ORDER BY " + KEY_PRICE + "*1, price ASC ";
+		else return "";
 	}
 	
 	public CustomStringList getListOfProperty(String columnName){
@@ -243,10 +241,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if(param == "price"){
 			sortQry = "";
 		}
-		//I can't get it to return wines where value is equal to query, for example query for 100 returns only wines below 100 in price.
-		//hack solution
-		int iPrice = Integer.parseInt(price) + 1;
-		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE + "<=" + iPrice + sortQry;
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE CAST(IFNULL(" + KEY_PRICE + ", 0) as INTEGER) <='" + price + "'" + sortQry;
 		return queryWines(qry);
 	}
 	
@@ -274,8 +269,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 	
 	public List<Wine> getBestCheapWines(String param){
-		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE +
-				"<=" + CHEAP_PRICE + " AND " + KEY_STARS + "=6" + getSortQry(param);
+		//SELECT * FROM TABLE_A WHERE CAST(IFNULL(COLUMN_A, 0) as INTEGER) >= '15'
+		
+		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE CAST(IFNULL(" + KEY_PRICE + ", 0) as INTEGER) <='" + 
+				CHEAP_PRICE + "' AND " + KEY_STARS + "=6" + getSortQry(param);
 		return queryWines(qry);
 	}
 	

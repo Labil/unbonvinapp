@@ -129,17 +129,16 @@ public class SearchActivity extends Activity {
 			addTextView(mMessageContainer, msg, mSubtitleFontSize, mMsgPadding, mSubtitleColor, null, null);
 		}
 		else{
-			addTextView(mMessageContainer, "Du søkte etter '" + lastQuery + "', sortert etter " + lastChosenRB.getTag() + ".  " 
-					+ wines.size() + " viner matchet søket.", mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
-			if(wines.size() == 0){
-				addTextView(mMessageContainer, "Beklager, ingen viner ble funnet. Prøv igjen med et annet søkeord!", mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
-				mResultLayout.setVisibility(View.GONE);
+			if(lastQuery == "Nyeste"){
+				addTextView(mMessageContainer, "Du søkte etter '" + lastQuery + "'.  " 
+						+ wines.size() + " viner matchet søket.", mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
 			}
 			else{
-				mResultLayout.setVisibility(View.VISIBLE);
+				addTextView(mMessageContainer, "Du søkte etter '" + lastQuery + "', sortert etter " + lastChosenRB.getTag() + ".  " 
+						+ wines.size() + " viner matchet søket.", mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
 			}
 		}
-		
+		int count = 0;
 		for(Wine w : wines){
 			
 			/******************* Layouts ***************************/
@@ -148,8 +147,11 @@ public class SearchActivity extends Activity {
 			wineContainer.setOrientation(LinearLayout.VERTICAL);
 			wineContainer.setClickable(true);
 			wineContainer.setBackgroundColor(mBgColor);
+			if(count == 0){
+				wineContainer.setBackground(getResources().getDrawable(R.drawable.round_edges_top_bg));
+			}
 			mResultLayout.addView(wineContainer);
-			
+			count++;
 			//Wine short info container
         	LinearLayout shortInfo = new LinearLayout(this);
         	shortInfo.setOrientation(LinearLayout.HORIZONTAL);
@@ -266,13 +268,13 @@ public class SearchActivity extends Activity {
         
         
 	    String searchText = ((WineApp)this.getApplicationContext()).getSearchText();
-	    
+	    lastQuery = searchText;
 	    //The default value of the searchText at application launch (before search has been made)
 	    if(searchText.compareTo("-1") == 0){
 	    	Log.d(TAG, "This was first time starting app");
 	    	//Send in lastQuery which by default is empty, 
 	    	//thus fetching all wines by alphabetical order at startup
-	    	handleSearch(lastQuery);
+	    	handleSearch("all");
 	    }
 	    else{
 	    	//setContentView(R.layout.activity_search);
@@ -283,16 +285,18 @@ public class SearchActivity extends Activity {
 	        	//selectBtn.toggle();
 	        }
 	    }
-	    lastQuery = searchText;
+	    
 	}
 	
 	public void requestBestCheapWines(View v){
 		List<Wine> wines = dbHandler.getBestCheapWines(getFilterParam());
+		lastQuery = "Best & billigst";
 		populateView(wines);
 	}
 	
 	public void requestNewestWines(View v){
 		List<Wine> wines = dbHandler.getNewestWines();
+		lastQuery = "Nyeste";
 		populateView(wines);
 	}
 	
@@ -315,9 +319,8 @@ public class SearchActivity extends Activity {
 	
 	private void handleSearch(String query){
 		
-		if(query.isEmpty()){
-			Log.d(TAG, "The query was empty");
-			//Hardcoding in param for now until I make checkboxes
+		if(query == "all"){
+			Log.d(TAG, "The query was for all wines");
 			List<Wine> wines = dbHandler.getWines(getFilterParam());
 			populateView(wines);
 		}

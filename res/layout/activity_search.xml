@@ -92,19 +92,39 @@
 		 
 		    </RadioGroup>
 		    
+            <LinearLayout
+            	android:layout_width="fill_parent"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal"
+            	android:gravity="center_horizontal"
+            	android:layout_marginBottom="20sp" >
+		        
             <Button
                 android:id="@+id/newest"
-                android:layout_width="wrap_content"
+                android:layout_width="300dp"
 				android:layout_height="wrap_content"
+				android:background="@drawable/black_btn"
+				android:padding="10dp"
+				android:textColor="#ffffff"
+				android:layout_marginRight="20dp"
 				android:text="@string/newest"
+				android:gravity="center_horizontal"
 				android:onClick="requestNewestWines" />
             
             <Button
                 android:id="@+id/bestcheap"
-                android:layout_width="wrap_content"
+                android:background="@drawable/black_btn"
+                android:layout_width="300dp"
 				android:layout_height="wrap_content"
+				android:padding="10dp"
+				android:textColor="#ffffff"
 				android:text="@string/bestcheap"
+				android:gravity="center_horizontal"
 				android:onClick="requestBestCheapWines" />
+            
+        </LinearLayout>
+            
+           
             
             <LinearLayout
                 android:id="@+id/messages"
@@ -122,7 +142,6 @@
             <LinearLayout
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
-			    android:background="@drawable/round_edges_bg"
 			    android:orientation="vertical"
 			    android:id="@+id/results" >
 		    </LinearLayout>

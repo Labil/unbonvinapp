@@ -19,7 +19,7 @@
     <string name="type">Type</string>
     <string name="price">Pris (Lav-høy)</string>
     <string name="newest">Nyeste</string>
-    <string name="bestcheap">Best &amp; billig!</string>
+    <string name="bestcheap">Best &amp; billigst!</string>
     
     <!-- Tag text strings defined on the radio buttons that will be used as extra params when searching -->
     <string name="tag_alpha">navn</string>
