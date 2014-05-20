@@ -71,7 +71,7 @@
 		            android:textColor="#ffffff"
                 	android:textSize="24sp"
 		            android:text="@string/price" />
-		        <RadioButton
+		       <!-- <RadioButton
 		            android:id="@+id/newest"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
@@ -88,13 +88,41 @@
 		            android:tag="@string/tag_bestcheap"
 		            android:textColor="#ffffff"
                 	android:textSize="24sp"
-		            android:text="@string/bestcheap" />
+		            android:text="@string/bestcheap" />-->
 		 
 		    </RadioGroup>
+		    
+            <Button
+                android:id="@+id/newest"
+                android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/newest"
+				android:onClick="requestNewestWines" />
+            
+            <Button
+                android:id="@+id/bestcheap"
+                android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/bestcheap"
+				android:onClick="requestBestCheapWines" />
+            
+            <LinearLayout
+                android:id="@+id/messages"
+                android:background="@drawable/round_edges_bg"
+            	android:layout_width="fill_parent"
+            	android:layout_height="wrap_content"
+            	android:orientation="vertical"
+            	android:gravity="center_horizontal"
+            	android:layout_marginLeft="40sp"
+            	android:layout_marginRight="40sp"
+            	android:layout_marginBottom="20sp" >
+            
+        </LinearLayout>
 		   	
             <LinearLayout
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
+			    android:background="@drawable/round_edges_bg"
 			    android:orientation="vertical"
 			    android:id="@+id/results" >
 		    </LinearLayout>

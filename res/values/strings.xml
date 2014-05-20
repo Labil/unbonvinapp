@@ -22,10 +22,8 @@
     <string name="bestcheap">Best &amp; billig!</string>
     
     <!-- Tag text strings defined on the radio buttons that will be used as extra params when searching -->
-    <string name="tag_alpha">alpha</string>
+    <string name="tag_alpha">navn</string>
     <string name="tag_type">type</string>
-    <string name="tag_price">price</string>
-    <string name="tag_newest">newest</string>
-    <string name="tag_bestcheap">bestcheap</string>
+    <string name="tag_price">pris</string>
     
 </resources>

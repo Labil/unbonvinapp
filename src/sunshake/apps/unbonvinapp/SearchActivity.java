@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -29,11 +30,12 @@ public class SearchActivity extends Activity {
 	private DatabaseHandler dbHandler;
 	private static final String TAG = "[Search Activity]";
 	private Typeface mNameFont;
-	private RadioButton alphabeticalCB, typeCB, priceCB, bestcheapCB, newestCB;
+	private RadioButton alphabeticalRB, typeRB, priceRB;
 	private RadioGroup filterRadioGroup;
 	private String lastQuery = "";
 	private RadioButton lastChosenRB = null;
 	private LinearLayout mResultLayout;
+	private LinearLayout mMessageContainer;
 	private int mThirdWidth, mTitleColor, mSubtitleColor, mBgColor;
 	private float mTitleFontSize, mSubtitleFontSize;
 	private int[] mTitlePadding = {20, 20, 20, 10};
@@ -67,7 +69,7 @@ public class SearchActivity extends Activity {
 	
 	private void init(){
 		mResultLayout = (LinearLayout) findViewById(R.id.results);
-		
+		mMessageContainer = (LinearLayout) findViewById(R.id.messages);
 		//Get the width of the display to setup the layout
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
@@ -84,12 +86,12 @@ public class SearchActivity extends Activity {
 		wineTypes = dbHandler.getListOfProperty("type");
 	 	wineCountries = dbHandler.getListOfProperty("country");
 	 	
-	 	alphabeticalCB = (RadioButton) findViewById(R.id.alphabetical);
-	 	typeCB = (RadioButton) findViewById(R.id.type);
-	 	priceCB = (RadioButton) findViewById(R.id.price);
-	 	bestcheapCB = (RadioButton) findViewById(R.id.bestcheap);
-	 	newestCB = (RadioButton) findViewById(R.id.newest);
+	 	alphabeticalRB = (RadioButton) findViewById(R.id.alphabetical);
+	 	typeRB = (RadioButton) findViewById(R.id.type);
+	 	priceRB = (RadioButton) findViewById(R.id.price);
 	 	filterRadioGroup = (RadioGroup) findViewById(R.id.radioFilter);
+	 	
+	 	lastChosenRB =  alphabeticalRB;
 	}
 	
 	View.OnClickListener onWineClick(final LinearLayout info)  {
@@ -117,13 +119,25 @@ public class SearchActivity extends Activity {
 	
 	private void populateView(List<Wine> wines){
 		mResultLayout.removeAllViews();
+		mMessageContainer.removeAllViews();
 		
-		if(wines.size() == 0){
-			LinearLayout messageContainer = new LinearLayout(this);
-			messageContainer.setOrientation(LinearLayout.VERTICAL);
-			messageContainer.setBackgroundColor(mBgColor);
-			mResultLayout.addView(messageContainer);
-			addTextView(messageContainer, "Beklager, ingen viner ble funnet. Prøv igjen med et annet søkeord!", mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
+		if(lastQuery == "" || lastQuery == "-1"){
+			String title = "Velkommen til UnBonVinApp!";
+			String msg = "Klikk på forstørrelsesglasset på oppgavelinja og skriv inn navn på vin, type, land, eller pris for å søke." +
+					" Du kan og bruke snarveiene 'Nyeste' og 'Best & billigst'.";
+			addTextView(mMessageContainer, title, mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
+			addTextView(mMessageContainer, msg, mSubtitleFontSize, mMsgPadding, mSubtitleColor, null, null);
+		}
+		else{
+			addTextView(mMessageContainer, "Du søkte etter '" + lastQuery + "', sortert etter " + lastChosenRB.getTag() + ".  " 
+					+ wines.size() + " viner matchet søket.", mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
+			if(wines.size() == 0){
+				addTextView(mMessageContainer, "Beklager, ingen viner ble funnet. Prøv igjen med et annet søkeord!", mTitleFontSize, mMsgPadding, mTitleColor, null, mNameFont);
+				mResultLayout.setVisibility(View.GONE);
+			}
+			else{
+				mResultLayout.setVisibility(View.VISIBLE);
+			}
 		}
 		
 		for(Wine w : wines){
@@ -252,6 +266,7 @@ public class SearchActivity extends Activity {
         
         
 	    String searchText = ((WineApp)this.getApplicationContext()).getSearchText();
+	    
 	    //The default value of the searchText at application launch (before search has been made)
 	    if(searchText.compareTo("-1") == 0){
 	    	Log.d(TAG, "This was first time starting app");
@@ -268,6 +283,34 @@ public class SearchActivity extends Activity {
 	        	//selectBtn.toggle();
 	        }
 	    }
+	    lastQuery = searchText;
+	}
+	
+	public void requestBestCheapWines(View v){
+		List<Wine> wines = dbHandler.getBestCheapWines(getFilterParam());
+		populateView(wines);
+	}
+	
+	public void requestNewestWines(View v){
+		List<Wine> wines = dbHandler.getNewestWines();
+		populateView(wines);
+	}
+	
+	//Checks what sort of search filter should be applied
+	private String getFilterParam(){
+		if(alphabeticalRB.isChecked()){
+			lastChosenRB = alphabeticalRB;
+			return "alpha";
+		}
+		else if(typeRB.isChecked()){
+			lastChosenRB = typeRB;
+			return "type";
+		}
+		else if(priceRB.isChecked()){
+			lastChosenRB = priceRB;
+			return "price";
+		}
+		return "";
 	}
 	
 	private void handleSearch(String query){
@@ -275,40 +318,37 @@ public class SearchActivity extends Activity {
 		if(query.isEmpty()){
 			Log.d(TAG, "The query was empty");
 			//Hardcoding in param for now until I make checkboxes
-			List<Wine> wines = dbHandler.getWines("alpha");
+			List<Wine> wines = dbHandler.getWines(getFilterParam());
 			populateView(wines);
 		}
 		//If the query matches any number 4 times in a row (year)
 		else if(query.matches("(\\d{4})")){
 			Log.d(TAG, "The query is for a year");
-			List<Wine> wines = dbHandler.getWinesByYear(query, "alpha");
+			List<Wine> wines = dbHandler.getWinesByYear(query, getFilterParam());
 			populateView(wines);
 		}
 		//Three- and two-digit numbers are considered search for price
 		else if(query.matches("(\\d{3})") || query.matches("(\\d{2})")){
 			Log.d(TAG, "The query is for a price");
-			List<Wine> wines = dbHandler.getWinesByPrice(query, "");
+			List<Wine> wines = dbHandler.getWinesByPrice(query, getFilterParam());
 			populateView(wines);
 		}
 		else if(wineTypes.contains(query)){
 			Log.d(TAG, "The query was for type");
-			List<Wine> wines = dbHandler.getWinesByType(query, "alpha");
+			List<Wine> wines = dbHandler.getWinesByType(query, getFilterParam());
 			populateView(wines);
 		}
 		else if(wineCountries.contains(query)){
 			Log.d(TAG, "The query is for a country");
-			List<Wine> wines = dbHandler.getWinesByCountry(query, "");
+			List<Wine> wines = dbHandler.getWinesByCountry(query, getFilterParam());
 			populateView(wines);
 		}
 		else if(query.matches(".{1,}")){
 			Log.d(TAG, "The query was for a name");
-			List<Wine> wines = dbHandler.getWinesByName(query, "price");
+			List<Wine> wines = dbHandler.getWinesByName(query, getFilterParam());
 			populateView(wines);
 		}
 	}
 	
-	public interface OnLoadListener{
-		public void onLoad();
-	}
 }
 

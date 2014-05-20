@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sunshake.apps.unbonvinapp.SearchActivity.OnLoadListener;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -65,7 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_NOTE = "note";
 	private static final String KEY_VERSION = "updateVersion";
 	private static final String NEW_THRESHOLD = "940"; //Arbitrary for now
-	private static final String CHEAP_PRICE = "100";
+	private static final String CHEAP_PRICE = "120";
 	
 	private static final String KEY_VERSION_IN_TABLE_UPDATE = "updateNum";
 	//private static final int RESULT_LIMIT = 100;
@@ -274,9 +273,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return queryWines(qry);
 	}
 	
-	public List<Wine> getBestCheapWines(){
+	public List<Wine> getBestCheapWines(String param){
 		String qry = "SELECT * FROM " + TABLE_WINES + " WHERE " + KEY_PRICE +
-				"<=" + CHEAP_PRICE + " AND " + KEY_STARS + "=6";
+				"<=" + CHEAP_PRICE + " AND " + KEY_STARS + "=6" + getSortQry(param);
 		return queryWines(qry);
 	}
 	
