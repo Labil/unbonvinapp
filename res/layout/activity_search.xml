@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Note to self: Scrollview can only have one direct child -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -105,31 +105,35 @@
 				android:onClick="requestBestCheapWines" />
             
         </LinearLayout>
-            
-           
-            
             <LinearLayout
-                android:id="@+id/messages"
-                android:background="@drawable/round_edges_bg"
-            	android:layout_width="fill_parent"
-            	android:layout_height="wrap_content"
-            	android:orientation="vertical"
-            	android:gravity="center_horizontal"
-            	android:layout_marginLeft="40sp"
-            	android:layout_marginRight="40sp"
-            	android:layout_marginBottom="20sp" >
-            
-        </LinearLayout>
-		   	
-            <LinearLayout
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
+	                android:id="@+id/messages"
+	                android:background="@drawable/round_edges_bg"
+	            	android:layout_width="fill_parent"
+	            	android:layout_height="wrap_content"
+	            	android:orientation="vertical"
+	            	android:gravity="center_horizontal"
+	            	android:layout_marginLeft="40sp"
+	            	android:layout_marginRight="40sp"
+	            	android:layout_marginBottom="20sp" >
+	            
+	        	</LinearLayout>
+           <ScrollView
 			    android:orientation="vertical"
-			    android:id="@+id/results" >
-		    </LinearLayout>
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent" >
+            
+	            
+			   	
+	            <LinearLayout
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:orientation="vertical"
+				    android:id="@+id/results" >
+			    </LinearLayout>
+		   	</ScrollView>
 		   
 	</LinearLayout>
 	
-</ScrollView>
+</LinearLayout>
 
  
